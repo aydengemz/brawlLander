@@ -1,101 +1,208 @@
-import Image from "next/image";
+"use client"
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Clock, Sparkles } from 'lucide-react';
+import { Alert, AlertDescription } from './components/alert';
+import { Card, CardContent } from './components/card';
+import { Button } from './components/button';
+
+interface ProgressStepProps {
+  number: number;
+  title: string;
+  isActive: boolean;
+  isCompleted: boolean;
+}
+
+const generateGameName = () => {
+  const prefixes = ['Pro', 'Epic', 'Noble', 'Dark', 'Royal', 'Mega', 'Ultra', 'Super', 'Ninja', 'Legend'];
+  const names = ['Brawler', 'Spike', 'Star', 'Crow', 'Leon', 'Beast', 'Fighter', 'Hero', 'Master', 'Warrior'];
+  const numbers = ['', ...Array.from({ length: 99 }, (_, i) => (i + 1).toString())];
+  
+  return `${prefixes[Math.floor(Math.random() * prefixes.length)]}${names[Math.floor(Math.random() * names.length)]}${numbers[Math.floor(Math.random() * numbers.length)]}`;
+};
+
+const GemIcon = () => (
+  <img 
+    src="https://cdn-assets-eu.frontify.com/s3/frontify-enterprise-files-eu/eyJwYXRoIjoic3VwZXJjZWxsXC9maWxlXC81VkplRUFXa3luVkJXYXhVdm02ai5wbmcifQ:supercell:8mM-ht1uZ1N4ipp81GwFKk-B0382d0jHn052F5w4sTA?width=2400"
+    alt="Gem"
+    className="w-4 h-4 inline-block align-middle justify-self-center"
+  />
+);
+
+const ProgressStep: React.FC<ProgressStepProps> = ({ number, title, isActive, isCompleted }) => (
+  <motion.div
+    className="flex items-center mb-3 justify-center w-full"
+    initial={{ opacity: 0, x: -20 }}
+    animate={{ opacity: 1, x: 0 }}
+    transition={{ duration: 0.3, delay: number * 0.1 }}
+  >
+    <motion.div
+      className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3
+        ${isCompleted ? 'bg-pink-400' : isActive ? 'bg-pink-500' : 'bg-pink-600'}
+        text-white font-bold text-lg shadow-md`}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+    >
+      {isCompleted ? <GemIcon /> : number}
+    </motion.div>
+    <span className={`${isCompleted ? 'text-pink-400' : isActive ? 'text-pink-500' : 'text-pink-600'} 
+      text-lg font-bold flex-1`}>
+      {title}
+    </span>
+  </motion.div>
+);
+
+const CountdownTimer: React.FC = () => {
+  const [timeLeft, setTimeLeft] = useState({ minutes: 30, seconds: 0 });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev.seconds === 0) {
+          if (prev.minutes === 0) {
+            clearInterval(timer);
+            return prev;
+          }
+          return { minutes: prev.minutes - 1, seconds: 59 };
+        }
+        return { ...prev, seconds: prev.seconds - 1 };
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <motion.div 
+      className="flex items-center justify-center space-x-3 text-white mb-4 bg-pink-500/80 p-3 rounded-xl backdrop-blur-sm"
+      animate={{ scale: [1, 1.01, 1] }}
+      transition={{ duration: 2, repeat: Infinity }}
+    >
+      <Clock className="w-5 h-5" />
+      <span className="text-xl font-bold">
+        {String(timeLeft.minutes).padStart(2, '0')}:{String(timeLeft.seconds).padStart(2, '0')}
+      </span>
+      <span className="font-bold">remaining!</span>
+    </motion.div>
+  );
+};
+
+const AffiliateButton = () => (
+  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="relative">
+    <motion.div
+      className="absolute -inset-1 bg-gradient-to-r from-pink-400 to-pink-600 rounded-xl blur-lg"
+      animate={{ opacity: [0.5, 0.8, 0.5] }}
+      transition={{ duration: 2, repeat: Infinity }}
+    />
+    <a href="https://t.afftrackr.com/?lnwk=7oalGrDCjNa2UPlyLbn9tclGWbHYmNUQvQJDRoz7h5U%3d&s1=" target="_blank" rel="noopener noreferrer">
+      <Button className="relative z-10 bg-gradient-to-r from-pink-500 to-pink-600 text-white font-bold py-4 px-8 rounded-xl text-xl flex items-center gap-2 shadow-lg hover:from-pink-600 hover:to-pink-700 transition-all duration-300">
+        Claim Free Gems! <GemIcon />
+      </Button>
+    </a>
+  </motion.div>
+);
+
+const RecentWinner: React.FC = () => {
+  const [visible, setVisible] = useState(true);
+  const [currentName, setCurrentName] = useState(generateGameName());
+  const [gemAmount, setGemAmount] = useState(Math.floor(Math.random() * 1501) + 500);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setVisible(false);
+      setTimeout(() => {
+        setCurrentName(generateGameName());
+        setGemAmount(Math.floor(Math.random() * 1501) + 500);
+        setVisible(true);
+      }, 400);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -30 }}
+          transition={{ duration: 0.4, ease: "backOut" }}
+          className="fixed top-4 inset-x-0 mx-auto max-w-sm"
+        >
+          <Alert className="w-full bg-white/95 text-pink-600 shadow-lg p-3 rounded-lg backdrop-blur border border-pink-200">
+            <AlertDescription className="font-bold text-base">
+              <span className="text-pink-500">{currentName}</span> claimed {gemAmount} <GemIcon />  !
+            </AlertDescription>
+          </Alert>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+    <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+      <RecentWinner />
+      <div className="fixed inset-0 -z-10">
+        <img
+          src="https://cdn-assets-eu.frontify.com/s3/frontify-enterprise-files-eu/eyJwYXRoIjoic3VwZXJjZWxsXC9maWxlXC93Z3VYdVdyZFdUTHRXcG54M01VTC5wbmcifQ:supercell:-AP1YmHMVk5y9MZGtGH7QKMgXXH2wseKlOkMUCBaI1M?width=2400"
+          alt="Background"
+          className="w-full h-full object-cover"
         />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+      </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      <div className="w-full min-h-screen flex flex-col items-center justify-center p-4 sm:p-6">
+        <motion.div 
+          className="w-full max-w-sm flex flex-col items-center gap-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <motion.div 
+            className="mb-2 w-32 sm:w-36 rounded-2xl overflow-hidden shadow-xl relative"
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.3 }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+            <img src="https://game-assets.store.supercell.com/brawlstars/d9c873ac-9f49-4397-a870-1f823a8c2d54.png" alt="Logo" />
+          </motion.div>
+
+          <motion.div className="absolute top-4 right-4 w-24 h-24 sm:w-32 sm:h-32">
+            <img 
+              src="https://cdn-assets-eu.frontify.com/s3/frontify-enterprise-files-eu/eyJwYXRoIjoic3VwZXJjZWxsXC9maWxlXC9QdXBGNEd3dmRBck5SamlmUEt5eC5wbmcifQ:supercell:JFv88_EMYJmbGEVBT0JkmHjnqpXqoMB4Q5NcqSEmjhM?width=2400"
+              alt="Brawl Stars Character"
+              className="w-full h-full object-contain"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          </motion.div>
+
+          <motion.div 
+            className="text-center w-full py-2"
+            animate={{ scale: [1, 1.02, 1] }}
+            transition={{ duration: 2, repeat: Infinity }}
           >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+            <h1 className="text-3xl font-bold text-white mb-1">
+              FREE GEMS!
+            </h1>
+            <p className="text-lg text-white/90 font-medium">Limited Time Event!</p>
+          </motion.div>
+
+          <CountdownTimer />
+
+          <Card className="w-full bg-white/95 rounded-xl border border-pink-200 backdrop-blur-sm mb-6">
+            <CardContent className="p-4">
+              <h2 className="text-2xl font-bold text-pink-600 mb-4 text-center">
+                How to Claim
+              </h2>
+              <ProgressStep number={1} title="Enter Your Info" isActive={true} isCompleted={false} />
+              <ProgressStep number={2} title="Complete Some Deals" isActive={false} isCompleted={false} />
+              <ProgressStep number={3} title="Get Your Gems!" isActive={false} isCompleted={false} />
+            </CardContent>
+          </Card>
+
+          <AffiliateButton />
+        </motion.div>
+      </div>
     </div>
   );
 }
