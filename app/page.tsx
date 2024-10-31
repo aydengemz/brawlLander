@@ -1,10 +1,12 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Clock, Sparkles } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import { Alert, AlertDescription } from './components/alert';
 import { Card, CardContent } from './components/card';
 import { Button } from './components/button';
+import { FAQSection } from './components/FAQ';
+
 
 interface ProgressStepProps {
   number: number;
@@ -94,7 +96,7 @@ const AffiliateButton = () => (
       animate={{ opacity: [0.5, 0.8, 0.5] }}
       transition={{ duration: 2, repeat: Infinity }}
     />
-    <a href="https://t.afftrackr.com/?lnwk=7oalGrDCjNa2UPlyLbn9tclGWbHYmNUQvQJDRoz7h5U%3d&s1=" target="_blank" rel="noopener noreferrer">
+    <a href="https://t.afftrackr.com/?r3x=OoPj2%2bGRZpUfwrNvJr0SIJNgo95ML%2faAvQJDRoz7h5U%3d&s1=" target="_blank" rel="noopener noreferrer">
       <Button className="relative z-10 bg-gradient-to-r from-pink-500 to-pink-600 text-white font-bold py-4 px-8 rounded-xl text-xl flex items-center gap-2 shadow-lg hover:from-pink-600 hover:to-pink-700 transition-all duration-300">
         Claim Free Gems! <GemIcon />
       </Button>
@@ -128,7 +130,7 @@ const RecentWinner: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -30 }}
           transition={{ duration: 0.4, ease: "backOut" }}
-          className="fixed top-4 inset-x-0 mx-auto max-w-sm"
+          className="fixed top-4 inset-x-0 mx-auto max-w-sm text-center"
         >
           <Alert className="w-full bg-white/95 text-pink-600 shadow-lg p-3 rounded-lg backdrop-blur border border-pink-200">
             <AlertDescription className="font-bold text-base">
@@ -139,12 +141,9 @@ const RecentWinner: React.FC = () => {
       )}
     </AnimatePresence>
   );
-};
-
-export default function Home() {
+};export default function Home() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
-      <RecentWinner />
       <div className="fixed inset-0 -z-10">
         <img
           src="https://cdn-assets-eu.frontify.com/s3/frontify-enterprise-files-eu/eyJwYXRoIjoic3VwZXJjZWxsXC9maWxlXC93Z3VYdVdyZFdUTHRXcG54M01VTC5wbmcifQ:supercell:-AP1YmHMVk5y9MZGtGH7QKMgXXH2wseKlOkMUCBaI1M?width=2400"
@@ -153,6 +152,8 @@ export default function Home() {
         />
       </div>
 
+      <RecentWinner />
+
       <div className="w-full min-h-screen flex flex-col items-center justify-center p-4 sm:p-6">
         <motion.div 
           className="w-full max-w-sm flex flex-col items-center gap-4"
@@ -160,31 +161,40 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
+          {/* Logo positioned as a regular element in the flow */}
           <motion.div 
-            className="mb-2 w-32 sm:w-36 rounded-2xl overflow-hidden shadow-xl relative"
+            className="w-24 h-24 sm:w-22 sm:h-22 mt-12 sm:mt-10"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.3 }}
           >
-            <img src="https://game-assets.store.supercell.com/brawlstars/d9c873ac-9f49-4397-a870-1f823a8c2d54.png" alt="Logo" />
-          </motion.div>
-
-          <motion.div className="absolute top-4 right-4 w-24 h-24 sm:w-32 sm:h-32">
             <img 
-              src="https://cdn-assets-eu.frontify.com/s3/frontify-enterprise-files-eu/eyJwYXRoIjoic3VwZXJjZWxsXC9maWxlXC9QdXBGNEd3dmRBck5SamlmUEt5eC5wbmcifQ:supercell:JFv88_EMYJmbGEVBT0JkmHjnqpXqoMB4Q5NcqSEmjhM?width=2400"
-              alt="Brawl Stars Character"
+              src="https://game-assets.store.supercell.com/brawlstars/d9c873ac-9f49-4397-a870-1f823a8c2d54.png"
+              alt="Brawl Stars Logo"
               className="w-full h-full object-contain"
             />
           </motion.div>
 
+          {/* <motion.div 
+        className="fixed bottom-4 right-4 w-20 h-20 sm:w-20 sm:h-20 z-20"
+        whileHover={{ scale: 1.05 }}
+        transition={{ duration: 0.3 }}
+      >
+        <img 
+          src="https://external-preview.redd.it/GeF2kYEpJe3WXdUGdGPUMXXDLU2V6bunwJc82ptUMpY.png?auto=webp&s=cf7e1d8417c90c964aff216fa023c70f18a4b064"
+          alt="Brawl Stars Character"
+          className="w-full h-full object-contain"
+        />
+      </motion.div> */}
+
+          {/* FREE GEMS header */}
           <motion.div 
-            className="text-center w-full py-2"
+            className="text-center w-full"
             animate={{ scale: [1, 1.02, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            <h1 className="text-3xl font-bold text-white mb-1">
-              FREE GEMS!
+            <h1 className="text-3xl font-bold text-white">
+              FREE 2000 GEMS!
             </h1>
-            <p className="text-lg text-white/90 font-medium">Limited Time Event!</p>
           </motion.div>
 
           <CountdownTimer />
@@ -195,12 +205,14 @@ export default function Home() {
                 How to Claim
               </h2>
               <ProgressStep number={1} title="Enter Your Info" isActive={true} isCompleted={false} />
-              <ProgressStep number={2} title="Complete Some Deals" isActive={false} isCompleted={false} />
+              <ProgressStep number={2} title="Complete Required Deals" isActive={false} isCompleted={false} />
               <ProgressStep number={3} title="Get Your Gems!" isActive={false} isCompleted={false} />
             </CardContent>
           </Card>
 
           <AffiliateButton />
+
+          <FAQSection />
         </motion.div>
       </div>
     </div>
